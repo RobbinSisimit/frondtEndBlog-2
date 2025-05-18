@@ -1,4 +1,4 @@
-// components/AddCommentForm.js
+
 import { useState } from "react";
 import { Box, Button, Input, Textarea, useToast, Spinner, Select, FormLabel } from "@chakra-ui/react";
 import useAddComment from "../hooks/useAddComment";
@@ -35,7 +35,6 @@ const AddCommentForm = ({ publications, onCommentAdded }) => {
         isClosable: true,
       });
 
-      // Limpiar formulario
       setAuthor("");
       setContent("");
       setSelectedPublication("");
@@ -53,7 +52,7 @@ const AddCommentForm = ({ publications, onCommentAdded }) => {
 
   const handlePublicationChange = (e) => {
     const publicationId = e.target.value;
-    setSelectedPublication(publicationId); // Guardamos el ID de la publicación seleccionada
+    setSelectedPublication(publicationId);
   };
 
   return (

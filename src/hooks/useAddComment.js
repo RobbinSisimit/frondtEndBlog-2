@@ -16,7 +16,6 @@ const useAddComment = () => {
         content: comment.content,
       };
 
-      // Enviar comentario
       const response = await addComment(publicationId, commentData);
 
       if (response?.error) {
