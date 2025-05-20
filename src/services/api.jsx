@@ -6,44 +6,76 @@ const apiClient = axios.create({
   timeout: 5000,
 });
 
+apiClient.interceptors.request.use(
+
+    (config) => {
+        const useUserDetails = localStorage.getItem('user');
+
+        if (useUserDetails) {
+            const token = JSON.parse(useUserDetails).token  
+            config.headers['x-token'] = token;
+            config.headers['x-token'] = token;
+        }
+
+        return config;
+    },
+    response => response,
+    error => {
+        if (error.response?.status === 401) {
+            window.dispatchEvent(new Event('token-expired'));
+        }
+        return Promise.reject(error);
+    }
+)
+
 // Obtener todas las publicaciones
 export const getPublications = async () => {
   try {
-    return await apiClient.get('/publications/');
+    const response = await apiClient.get('/publications/');
+    return response.data; // <--- aquí extraemos solo data
   } catch (e) {
     console.error("Error al obtener publicaciones:", e);
     return { error: true, message: e.message || "Hubo un error al obtener las publicaciones." };
   }
 };
 
+
 // Agregar un comentario a una publicación
-export const addComment = async (publicationId, data) => {
+export const addComment = async (data) => {
   try {
-    // Construir el cuerpo con el ID de la publicación incluido
-    const commentData = { ...data, publication: publicationId };
-
-    // Mostrar en consola para verificar que los datos están completos
-    console.log("Enviando comentario:", commentData);
-
-    const response = await apiClient.post('/comments/', commentData);
-
-    // Verificar si hay respuesta válida
-    if (response.data) {
-      return { success: true, data: response.data };
-    }
-
-    return { error: true, message: "No se recibieron datos válidos desde el servidor." };
+    return await apiClient.post('/comments/', data);
   } catch (e) {
-    console.error("Error al agregar comentario:", e);
-
-    // Retornar un error más claro si lo hay en la respuesta
+    const msg = e.response?.data?.msg || 'Error desconocido';
     return {
       error: true,
-      message:
-        e.response?.data?.message ||
-        (e.response?.data?.errors ? e.response.data.errors.map(err => err.msg).join(" | ") : null) ||
-        e.message ||
-        "Hubo un error al agregar el comentario.",
+      msg,
+      e,
     };
   }
 };
+
+export const deleteComment = async (commentId) => {
+   try {
+        return await apiClient.delete(`/comments/${commentId}`)
+  } catch (e) {
+      const msg = e.response?.data?.msg || 'Error desconocido';
+      return {
+          error: true,
+          msg,
+          e,
+      };
+  }
+}
+
+export const updateComment = async ( commentId,data ) => {
+  try{
+    return await apiClient.put(`/comments/${commentId}`,data)
+  }catch(e){
+    const msg = e.response?.data?.msg || 'Error desconocido';
+    return {
+        error: true,
+        msg,
+        e,
+    };  
+  }
+}

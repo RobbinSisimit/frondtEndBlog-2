@@ -1,6 +1,6 @@
 // hooks/useAddComment.js
 import { useState } from 'react';
-import { addComment } from '../services/api';
+import { addComment, } from '../services/api';
 
 const useAddComment = () => {
   const [loading, setLoading] = useState(false);
