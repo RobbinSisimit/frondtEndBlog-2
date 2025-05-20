@@ -40,7 +40,6 @@ const DashboardPage = () => {
 
   return (
     <Box p={6}>
-      {/* Filtro de categorías */}
       <HStack mb={6}>
         {categories.map((cat) => (
           <Button
